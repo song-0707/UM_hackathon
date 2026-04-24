@@ -1,0 +1,67 @@
+# Master Build Specification: "ScholarFlow" Web Platform
+
+**Core Mandate:** Before implementing the web UI, the developer must refactor the gatekeeping logic to support a "Two-Step Approval" workflow. This decouples discovery from deep analysis.
+
+## Phase 1: Logic Restructuring (The Gatekeeper Update)
+The original automated $70\%$ threshold logic is to be deprecated. Replace it with the following:
+
+1.  **Stage 1: Discovery & Insight (Low Cost)**
+    * The engine performs a search on OpenAlex.
+    * For every result, a **stateless** API call is made to generate a "Predicted Relevance Score" and a "3-Sentence Insight."
+    * **Data Object:** The engine must store these results in a temporary "Pending" state, waiting for user confirmation.
+2.  **Stage 2: Targeted Deep Analysis (High Cost)**
+    * The `deep_analyze()` function (chunking, hashing, synthesis) must be isolated so it can only be triggered by a specific list of User-Selected IDs.
+    * This ensures that no PDF downloads or heavy chunk processing occur until the user "approves" the paper.
+
+---
+
+## Phase 2: Web Implementation & UI Components
+The frontend must be built as a successive pipeline where each step is represented by **interactive cards**.
+
+### 1. Interaction & Input Cards
+* **Mode 1: General Keyword:** AI acts as a "Search Engineer," expanding input into a professional Boolean search string.
+* **Mode 2: Detailed Description:** AI creates a "Target Relevance Profile" to guide the scoring of the Discovery Gallery.
+
+### 2. The Discovery Gallery (Manual Gatekeeper)
+* **UI:** A responsive grid of cards.
+* **Hover State (The Insight):** On hover, the card displays the AI-Analyzed Abstract/Insight.
+* **Manual Selection:** Each card features a checkbox.
+* **Logic:** The "Deep Analyze" button is enabled only after at least one card is checked.
+
+### 3. The Analysis Pipeline (Visual Progress)
+* Selected papers move to an "Active Analysis" tray.
+* **Card-Specific Progress Bars:** Each card shows a real-time progress bar.
+* **Dynamic Status Labels:**
+    * `[CACHE HIT]`: Data retrieved instantly from local SQLite.
+    * `[API CALL]`: Communicating with `ilmu-glm-5.1`.
+    * `[CHUNKING]`: Parsing PDF text.
+
+---
+
+## 4. Technical Stack & API Integration
+The backend must preserve the specific `chat(message)` structure and handle the nested JSON schema.
+
+### API & Memory Management
+* **Framework:** FastAPI (recommended) for asynchronous card updates.
+* **Timeout Policy:** Implement a `read_timeout` of **180-300 seconds** for deep analysis to prevent **Port 443 Read Timeouts**.
+* **Context Isolation (Smart History):**
+    * **Phase 1 (Search):** Maintain `conversation_history` for refining search terms.
+    * **Phase 2 (Deep Analysis):** **Clear history for every chunk.** Each segment must be analyzed statelessly to prevent context contamination.
+    * **Phase 3 (Synthesis):** Clean state; feed only aggregated summaries.
+
+### Caching Strategy
+* **Database:** SQLite with **WAL Mode** enabled (`PRAGMA journal_mode=WAL;`).
+* **Hashing:** Use SHA-256 for chunk text to ensure instant `[CACHE HIT]` results for previously analyzed papers.
+
+---
+
+## 5. Final Synthesis Card
+Once analysis is finished, a full-width **Report Card** is generated.
+* **Max Output:** 4000 tokens.
+* **Format:** High-fidelity Markdown (headers, lists, citations).
+* **Content:** A comprehensive synthesis across all $N$ papers selected by the user.
+
+---
+
+### Logic Directive for the Agent:
+> "First, decouple the automated scoring. The engine must generate 'Discovery Insights' without starting the deep analysis. Once the logic supports manual selection, implement the web frontend using the card-based grid where each paper's progress is tracked individually. Ensure the SQLite DB is optimized for concurrent reads/writes to allow the UI to stay responsive during heavy API calls."

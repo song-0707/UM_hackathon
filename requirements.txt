@@ -1,0 +1,9 @@
+requests
+tqdm
+pymupdf
+aiohttp
+supabase
+python-dotenv
+fastapi
+uvicorn
+sse-starlette

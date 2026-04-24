@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScholarFlow - Academic Research Engine</title>
+    <meta name="description" content="AI-powered pipeline for academic discovery and deep analysis.">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>ScholarFlow <span class="badge">AI</span></h1>
+            <p>Two-Step Academic Discovery & Analysis Workflow</p>
+        </header>
+
+        <main>
+            <!-- STAGE 1: DISCOVERY INPUT -->
+            <section id="input-section" class="glass-card section-active">
+                <h2>1. Search Parameters</h2>
+                <div class="input-group">
+                    <label for="search-mode">Search Mode</label>
+                    <select id="search-mode">
+                        <option value="1">Mode 1: General Keyword (Boolean Expansion)</option>
+                        <option value="2">Mode 2: Detailed Description (Relevance Profiling)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="search-input">Keywords or Problem Description</label>
+                    <textarea id="search-input" rows="4" placeholder="Enter your research query here..."></textarea>
+                </div>
+                <button id="btn-discover" class="btn primary-btn">Discover Papers <span class="spinner hidden"></span></button>
+            </section>
+
+            <!-- STAGE 2: DISCOVERY GALLERY -->
+            <section id="gallery-section" class="section-hidden">
+                <div class="section-header">
+                    <h2>2. Discovery Gallery</h2>
+                    <span id="profile-display" class="profile-text"></span>
+                </div>
+                <p class="subtitle">Select papers for deep analysis based on AI-generated insights.</p>
+                
+                <div id="gallery-grid" class="card-grid">
+                    <!-- Cards will be injected here dynamically -->
+                </div>
+
+                <div class="action-bar">
+                    <button id="btn-analyze" class="btn primary-btn" disabled>Deep Analyze Selected <span class="spinner hidden"></span></button>
+                </div>
+            </section>
+
+            <!-- STAGE 3: ACTIVE ANALYSIS TRAY -->
+            <section id="analysis-section" class="section-hidden">
+                <h2>3. Active Analysis Pipeline</h2>
+                <div id="analysis-tray" class="card-grid">
+                    <!-- Selected cards move here with progress bars -->
+                </div>
+            </section>
+
+            <!-- STAGE 4: SYNTHESIS REPORT -->
+            <section id="report-section" class="section-hidden">
+                <h2>4. Final Synthesis Report</h2>
+                <div id="report-content" class="glass-card markdown-body">
+                    <!-- Markdown will be rendered here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
