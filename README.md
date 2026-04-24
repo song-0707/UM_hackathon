@@ -23,7 +23,7 @@ The primary objective of ScholarFlow AI is to eliminate the fragmented, manual w
 ### Setup Steps
 1. **Navigate to the project directory** (e.g., using Command Prompt or Terminal):
    ```bash
-   cd "Program 2.0"
+   cd ScholarFlow
    ```
 2. **Install Python Dependencies:**
    Install all required backend modules via pip:
