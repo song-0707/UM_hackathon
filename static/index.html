@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <!-- Marked.js for markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
+
 <body>
     <div class="app-container">
         <header class="app-header">
@@ -34,7 +36,23 @@
                     <label for="search-input">Keywords or Problem Description</label>
                     <textarea id="search-input" rows="4" placeholder="Enter your research query here..."></textarea>
                 </div>
-                <button id="btn-discover" class="btn primary-btn">Discover Papers <span class="spinner hidden"></span></button>
+                <button id="btn-discover" class="btn primary-btn">Discover Papers <span
+                        class="spinner hidden"></span></button>
+
+                <!-- Search Progress Bar (Hidden by default) -->
+                <div id="search-progress-container" class="hidden" style="margin-top: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span id="search-progress-text" style="font-weight: 600; color: #e2e8f0;">Initializing
+                            Search...</span>
+                        <span id="search-progress-percent" style="font-size: 0.9rem; color: var(--primary);">0%</span>
+                    </div>
+                    <div class="progress-container" style="height: 8px;">
+                        <div id="search-progress-bar" class="progress-bar search-bar" style="width: 0%;"></div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">
+                        Please wait, the AI is analyzing abstracts and generating insights...</p>
+                </div>
             </section>
 
             <!-- STAGE 2: DISCOVERY GALLERY -->
@@ -44,13 +62,14 @@
                     <span id="profile-display" class="profile-text"></span>
                 </div>
                 <p class="subtitle">Select papers for deep analysis based on AI-generated insights.</p>
-                
+
                 <div id="gallery-grid" class="card-grid">
                     <!-- Cards will be injected here dynamically -->
                 </div>
 
                 <div class="action-bar">
-                    <button id="btn-analyze" class="btn primary-btn" disabled>Deep Analyze Selected <span class="spinner hidden"></span></button>
+                    <button id="btn-analyze" class="btn primary-btn" disabled>Deep Analyze Selected <span
+                            class="spinner hidden"></span></button>
                 </div>
             </section>
 
@@ -74,4 +93,5 @@
 
     <script src="/static/app.js"></script>
 </body>
+
 </html>

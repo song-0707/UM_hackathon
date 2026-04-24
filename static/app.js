@@ -20,9 +20,45 @@ async function handleDiscover() {
 
     const btn = document.getElementById('btn-discover');
     const spinner = btn.querySelector('.spinner');
+    const progressContainer = document.getElementById('search-progress-container');
+    const progressBar = document.getElementById('search-progress-bar');
+    const progressText = document.getElementById('search-progress-text');
+    const progressPercent = document.getElementById('search-progress-percent');
     
     btn.disabled = true;
     spinner.classList.remove('hidden');
+    progressContainer.classList.remove('hidden');
+    
+    // Simulate Progress
+    let progress = 0;
+    progressBar.style.width = '0%';
+    progressPercent.textContent = '0%';
+    
+    const statusMessages = [
+        "Connecting to Academic Databases...",
+        "Fetching papers from OpenAlex & ArXiv...",
+        "Running AI Relevance Profiling...",
+        "Generating 3-Sentence Insights...",
+        "Finalizing Discovery Gallery..."
+    ];
+    let messageIndex = 0;
+    progressText.textContent = statusMessages[0];
+
+    const progressInterval = setInterval(() => {
+        // Slow down as it gets closer to 95% to simulate waiting
+        if (progress < 40) progress += 2;
+        else if (progress < 70) progress += 1;
+        else if (progress < 95) progress += 0.5;
+        
+        progressBar.style.width = progress + '%';
+        progressPercent.textContent = Math.floor(progress) + '%';
+        
+        // Update text based on progress
+        if (progress > 20 && messageIndex < 1) { messageIndex = 1; progressText.textContent = statusMessages[1]; }
+        if (progress > 45 && messageIndex < 2) { messageIndex = 2; progressText.textContent = statusMessages[2]; }
+        if (progress > 70 && messageIndex < 3) { messageIndex = 3; progressText.textContent = statusMessages[3]; }
+        if (progress > 85 && messageIndex < 4) { messageIndex = 4; progressText.textContent = statusMessages[4]; }
+    }, 200);
 
     try {
         const response = await fetch('/api/search', {
@@ -31,6 +67,11 @@ async function handleDiscover() {
             body: JSON.stringify({ mode: parseInt(mode), input_data: inputData })
         });
 
+        clearInterval(progressInterval);
+        progressBar.style.width = '100%';
+        progressPercent.textContent = '100%';
+        progressText.textContent = "Complete!";
+        
         const data = await response.json();
         
         if (!response.ok || data.error) {
@@ -41,13 +82,24 @@ async function handleDiscover() {
         document.getElementById('profile-display').textContent = data.profile;
         renderDiscoveryGallery(discoveredPapers);
 
-        // Transition to Stage 2
-        document.getElementById('input-section').classList.replace('section-active', 'section-hidden');
-        document.getElementById('gallery-section').classList.replace('section-hidden', 'section-active');
+        // Slight delay to show 100% before transitioning
+        setTimeout(() => {
+            document.getElementById('input-section').classList.replace('section-active', 'section-hidden');
+            document.getElementById('gallery-section').classList.replace('section-hidden', 'section-active');
+            
+            // Reset for future uses
+            btn.disabled = false;
+            spinner.classList.add('hidden');
+            progressContainer.classList.add('hidden');
+        }, 800);
 
     } catch (error) {
+        clearInterval(progressInterval);
+        progressText.textContent = "Error Occurred!";
+        progressText.style.color = "#ef4444";
+        progressBar.style.background = "#ef4444";
         alert("Error: " + error.message);
-    } finally {
+        
         btn.disabled = false;
         spinner.classList.add('hidden');
     }

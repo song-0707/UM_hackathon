@@ -270,6 +270,19 @@ select:focus, textarea:focus {
     transition: width 0.3s ease;
 }
 
+.search-bar {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+    background-size: 200% 200%;
+    animation: gradientFlow 2s ease infinite;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .status-label {
     font-size: 0.8rem;
     color: var(--text-muted);
