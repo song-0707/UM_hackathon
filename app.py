@@ -1,8 +1,9 @@
 import asyncio
 import json
 import uuid
+import os
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Dict, Any
@@ -13,6 +14,15 @@ from engine.database import db
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def read_index():
+    return FileResponse(os.path.join("static", "index.html"))
+
+@app.get("/api/health")
+async def health_check():
+    """Dedicated endpoint for UptimeRobot to ping"""
+    return {"status": "active", "message": "ScholarFlow is running smoothly"}
 
 engine = ResearchEngine()
 
