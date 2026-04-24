@@ -35,10 +35,13 @@ class DBManager:
     def _get_cached_analysis_sync(self, chunk_text):
         chunk_hash = hashlib.sha256(chunk_text.encode('utf-8')).hexdigest()
         if self.supabase:
-            response = self.supabase.table("chunk_cache").select("analysis_result").eq("chunk_hash", chunk_hash).execute()
-            data = response.data
-            if data and len(data) > 0:
-                return data[0]["analysis_result"]
+            try:
+                response = self.supabase.table("chunk_cache").select("analysis_result").eq("chunk_hash", chunk_hash).execute()
+                data = response.data
+                if data and len(data) > 0:
+                    return data[0]["analysis_result"]
+            except Exception as e:
+                print(f"Supabase cache read error: {e}")
         return None
 
     async def get_cached_analysis(self, chunk_text):
@@ -52,7 +55,10 @@ class DBManager:
             "analysis_result": analysis_result
         }
         if self.supabase:
-            self.supabase.table("chunk_cache").upsert(data).execute()
+            try:
+                self.supabase.table("chunk_cache").upsert(data).execute()
+            except Exception as e:
+                print(f"Supabase cache write error: {e}")
 
     async def cache_analysis(self, chunk_text, analysis_result):
         """Asynchronously insert analysis result into Supabase."""

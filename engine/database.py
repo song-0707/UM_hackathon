@@ -22,8 +22,12 @@ class DatabaseManager:
         
         # We assume paper_dict contains: external_id, title, authors, abstract, url, publication_year, relevance_score, insight
         # We use upsert with on_conflict="external_id" to prevent duplicates
-        response = self.supabase.table("papers").upsert(paper_dict, on_conflict="external_id").execute()
-        return response.data
+        try:
+            response = self.supabase.table("papers").upsert(paper_dict, on_conflict="external_id").execute()
+            return response.data
+        except Exception as e:
+            print(f"Supabase discovery upsert error: {e}")
+            return None
 
     async def upsert_discovery_data(self, paper_dict):
         """Asynchronously save Phase 1 results without blocking the event loop."""
@@ -38,8 +42,12 @@ class DatabaseManager:
             "markdown_report": markdown_report,
             "analysis_status": "completed"
         }
-        response = self.supabase.table("papers").update(data).eq("external_id", external_id).execute()
-        return response.data
+        try:
+            response = self.supabase.table("papers").update(data).eq("external_id", external_id).execute()
+            return response.data
+        except Exception as e:
+            print(f"Supabase deep analysis update error: {e}")
+            return None
 
     async def update_deep_analysis(self, external_id, markdown_report):
         """Asynchronously save Phase 2 results without blocking event loop."""
