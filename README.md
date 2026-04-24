@@ -1,30 +1,43 @@
-# ScholarFlow AI 🎓
-# https://scholarflow-gpzh.onrender.com/
+# 🎓 ScholarFlow AI
 
-## Introduction
-ScholarFlow AI is a high-performance, cloud-ready research engine designed to automate the academic literature review process. Powered by the **Z AI GLM** model, it seamlessly integrates with major academic databases like OpenAlex and ArXiv to find relevant papers, generate instant insights, bypass paywalls, and deeply analyze entire research papers using a multi-step agentic chunking process.
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)
+![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?logo=render&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)
+![GLM-5.1](https://img.shields.io/badge/Z_AI-GLM--5.1-blueviolet)
 
-## Objective
-The primary objective of ScholarFlow AI is to eliminate the fragmented, manual workflow researchers face when sifting through academic literature. By introducing a "Two-Step AI Workflow", researchers can rapidly discover and filter high-relevance papers in seconds, and then offload the heavy lifting of reading and synthesizing 30+ page PDFs to the AI, receiving a fully formatted Markdown synthesis report.
+> **Live Demo:** [https://scholarflow-gpzh.onrender.com/](https://scholarflow-gpzh.onrender.com/)  
+> **Project Board:** [View our Agile Roadmap & Issues](https://github.com/users/song-0707/projects/2/views/1)
 
-## Features
-- **Intelligent Discovery:** Translates complex problem statements into optimized Boolean search strings.
-- **Instant Insights:** Generates 3-sentence summaries and predictive relevance scores (0-100) instantly.
-- **Automated Paywall Evasion:** Attempts to download PDFs natively, automatically falling back to ArXiv open-access preprints if a paper returns a 403 Forbidden.
-- **Deep Analysis Pipeline:** Downloads and chunks large PDFs to safely bypass LLM context window limits, processing text chunks in parallel.
-- **Real-Time UI:** Modern glassmorphism frontend using Server-Sent Events (SSE) to stream progress dynamically without page reloads.
+## 📖 Introduction
+**ScholarFlow AI** is a high-performance, cloud-ready research engine designed to automate the academic literature review process. Powered by the cutting-edge **Z AI GLM** model, it seamlessly integrates with major academic databases like OpenAlex and ArXiv to find relevant papers, generate instant insights, bypass paywalls, and deeply analyze entire research papers using a multi-step agentic chunking process.
 
-## Installation Method
+## 🎯 The Objective
+The primary objective of ScholarFlow is to eliminate the fragmented, manual workflow researchers face when sifting through academic literature. By introducing a **"Two-Step AI Workflow"**, researchers can:
+1. Rapidly discover and filter high-relevance papers in seconds.
+2. Offload the heavy lifting of reading and synthesizing 30+ page PDFs to the AI, receiving a fully formatted Markdown synthesis report.
+
+## ✨ Core Features
+- **🔍 Intelligent Discovery:** Translates complex problem statements into optimized Boolean search strings.
+- **⚡ Instant Insights:** Generates 3-sentence summaries and predictive relevance scores (0-100) instantly to act as a "Gatekeeper".
+- **🔓 Automated Paywall Evasion:** Attempts to download PDFs natively, automatically falling back to ArXiv open-access preprints if a paper returns a `403 Forbidden`.
+- **🧠 Deep Analysis Pipeline:** Downloads and chunks large PDFs to safely bypass LLM context window limits, processing text chunks concurrently.
+- **🌊 Real-Time UI:** Modern glassmorphism frontend using Server-Sent Events (SSE) to stream progress dynamically without page reloads.
+
+---
+
+## 🚀 Getting Started (Local Setup)
 
 ### Prerequisites
 - Python 3.10+
-- A Supabase account and project
+- A [Supabase](https://supabase.com/) account and project
 - An ILMU API Key (Z AI GLM)
 
-### Setup Steps
-1. **Navigate to the project directory** (e.g., using Command Prompt or Terminal):
+### Installation Steps
+1. **Clone & Navigate to the project directory:**
    ```bash
-   cd ScholarFlow
+   git clone [https://github.com/song-0707/UM_hackathon.git](https://github.com/song-0707/UM_hackathon.git)
+   cd UM_hackathon
    ```
 2. **Install Python Dependencies:**
    Install all required backend modules via pip:
