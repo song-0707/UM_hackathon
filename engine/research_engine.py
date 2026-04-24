@@ -4,6 +4,7 @@ from .database import db
 from .paper_handler import PaperHandler
 from .db_manager import DBManager # We might still need chunk_cache table which was in DBManager, but we can migrate it if needed. For now, keep it for chunk cache.
 import re
+import difflib
 
 class ResearchEngine:
     def __init__(self):
@@ -107,13 +108,21 @@ class ResearchEngine:
         pdf_path = await self.paper_handler.download_pdf(url, paper_id, title, year)
         if not pdf_path:
             # Fallback ArXiv
-            arxiv_results = await self.paper_handler.search_arxiv(title)
+            arxiv_results = await self.paper_handler.search_arxiv(f'ti:"{title}"')
             if arxiv_results:
                 fallback_paper = arxiv_results[0]
-                fallback_url = fallback_paper.get("open_access", {}).get("oa_url", "")
-                fallback_id = fallback_paper.get("id", "")
-                fallback_year = fallback_paper.get("year", "Unknown")
-                pdf_path = await self.paper_handler.download_pdf(fallback_url, fallback_id, title, fallback_year)
+                fallback_title = fallback_paper.get("title", "")
+                
+                # Prevent downloading completely unrelated papers (e.g. Explainable AI for a Coffee search)
+                similarity = difflib.SequenceMatcher(None, title.lower(), fallback_title.lower()).ratio()
+                
+                if similarity > 0.5:
+                    fallback_url = fallback_paper.get("open_access", {}).get("oa_url", "")
+                    fallback_id = fallback_paper.get("id", "")
+                    fallback_year = fallback_paper.get("year", "Unknown")
+                    pdf_path = await self.paper_handler.download_pdf(fallback_url, fallback_id, title, fallback_year)
+                else:
+                    if yield_callback: await yield_callback(f"[FAILED] ArXiv fallback paper was completely unrelated.")
 
         if not pdf_path:
             if yield_callback: await yield_callback(f"[FAILED] Could not download PDF for {title}")

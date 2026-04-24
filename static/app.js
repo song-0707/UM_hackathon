@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDiscover = document.getElementById('btn-discover');
     const btnAnalyze = document.getElementById('btn-analyze');
     const btnSearchMore = document.getElementById('btn-search-more');
-    
+
     btnDiscover.addEventListener('click', handleDiscover);
     btnAnalyze.addEventListener('click', handleDeepAnalyze);
     if (btnSearchMore) btnSearchMore.addEventListener('click', handleSearchMore);
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function handleDiscover() {
     const mode = document.getElementById('search-mode').value;
     const inputData = document.getElementById('search-input').value.trim();
-    
+
     if (!inputData) {
         alert("Please enter a search query.");
         return;
@@ -36,16 +36,16 @@ async function handleDiscover() {
     const progressBar = document.getElementById('search-progress-bar');
     const progressText = document.getElementById('search-progress-text');
     const progressPercent = document.getElementById('search-progress-percent');
-    
+
     btn.disabled = true;
     spinner.classList.remove('hidden');
     progressContainer.classList.remove('hidden');
-    
+
     // Simulate Progress
     let progress = 0;
     progressBar.style.width = '0%';
     progressPercent.textContent = '0%';
-    
+
     const statusMessages = [
         "Connecting to Academic Databases...",
         "Fetching papers from OpenAlex & ArXiv...",
@@ -61,10 +61,10 @@ async function handleDiscover() {
         if (progress < 40) progress += 2;
         else if (progress < 70) progress += 1;
         else if (progress < 95) progress += 0.5;
-        
+
         progressBar.style.width = progress + '%';
         progressPercent.textContent = Math.floor(progress) + '%';
-        
+
         // Update text based on progress
         if (progress > 20 && messageIndex < 1) { messageIndex = 1; progressText.textContent = statusMessages[1]; }
         if (progress > 45 && messageIndex < 2) { messageIndex = 2; progressText.textContent = statusMessages[2]; }
@@ -83,9 +83,9 @@ async function handleDiscover() {
         progressBar.style.width = '100%';
         progressPercent.textContent = '100%';
         progressText.textContent = "Complete!";
-        
+
         const data = await response.json();
-        
+
         if (!response.ok || data.error) {
             throw new Error(data.error || "Failed to discover papers.");
         }
@@ -101,7 +101,7 @@ async function handleDiscover() {
         setTimeout(() => {
             document.getElementById('input-section').classList.replace('section-active', 'section-hidden');
             document.getElementById('gallery-section').classList.replace('section-hidden', 'section-active');
-            
+
             // Reset for future uses
             btn.disabled = false;
             spinner.classList.add('hidden');
@@ -114,7 +114,7 @@ async function handleDiscover() {
         progressText.style.color = "#ef4444";
         progressBar.style.background = "#ef4444";
         alert("Error: " + error.message);
-        
+
         btn.disabled = false;
         spinner.classList.add('hidden');
     }
@@ -161,18 +161,18 @@ function handleSelectionChange() {
 async function handleSearchMore() {
     const btn = document.getElementById('btn-search-more');
     const spinner = btn.querySelector('.spinner');
-    
+
     btn.disabled = true;
     spinner.classList.remove('hidden');
-    
+
     currentPage++;
 
     try {
         const response = await fetch('/api/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                mode: currentMode, 
+            body: JSON.stringify({
+                mode: currentMode,
                 input_data: currentInputData,
                 page: currentPage,
                 existing_query: currentQuery,
@@ -181,14 +181,14 @@ async function handleSearchMore() {
         });
 
         const data = await response.json();
-        
+
         if (!response.ok || data.error) {
             throw new Error(data.error || "Failed to fetch more papers.");
         }
 
         // Append to existing array
         discoveredPapers = discoveredPapers.concat(data.papers);
-        
+
         // Append to UI without clearing
         appendDiscoveryGallery(data.papers);
 
@@ -203,7 +203,7 @@ async function handleSearchMore() {
 
 function appendDiscoveryGallery(papers) {
     const grid = document.getElementById('gallery-grid');
-    
+
     papers.forEach(paper => {
         const card = document.createElement('div');
         card.className = 'glass-card paper-card';
@@ -233,7 +233,7 @@ async function handleDeepAnalyze() {
 
     const btn = document.getElementById('btn-analyze');
     const spinner = btn.querySelector('.spinner');
-    
+
     btn.disabled = true;
     spinner.classList.remove('hidden');
 
@@ -246,7 +246,7 @@ async function handleDeepAnalyze() {
 
     try {
         const profile = document.getElementById('profile-display').textContent;
-        
+
         // Step 1: POST to start analysis and get task_id
         const response = await fetch('/api/start_analysis', {
             method: 'POST',
@@ -294,7 +294,7 @@ function setupAnalysisTray() {
 function startSSEStream(taskId) {
     const eventSource = new EventSource(`/api/analyze/${taskId}`);
 
-    eventSource.onmessage = function(event) {
+    eventSource.onmessage = function (event) {
         const data = JSON.parse(event.data);
 
         if (data.type === "progress") {
@@ -305,7 +305,7 @@ function startSSEStream(taskId) {
             eventSource.close();
             selectedPapers.forEach(p => {
                 const pb = document.getElementById(`prog-${p.external_id}`);
-                if(pb) pb.style.width = '100%';
+                if (pb) pb.style.width = '100%';
             });
 
             // Hide the analysis section so we ONLY show the reports
@@ -322,7 +322,7 @@ function startSSEStream(taskId) {
         }
     };
 
-    eventSource.onerror = function() {
+    eventSource.onerror = function () {
         // SSE sometimes closes naturally, but if error we can close
         eventSource.close();
     };
@@ -333,10 +333,10 @@ function updateProgressUI(message) {
     // or all of them depending on how the backend formats messages.
     // The backend sends f"[CHUNKING] Extracting text from {title}"
     // We can parse the tag to style it.
-    
+
     let tag = "info";
     let text = message;
-    
+
     const match = message.match(/^\[(.*?)\] (.*)/);
     if (match) {
         tag = match[1].toLowerCase();
@@ -344,12 +344,12 @@ function updateProgressUI(message) {
     }
 
     let tagHtml = `<span class="status-tag ${tag}">[${tag.toUpperCase()}]</span>`;
-    
+
     selectedPapers.forEach(p => {
         if (text.includes(p.title) || text.includes(p.title.substring(0, 20))) {
             const statusLabel = document.getElementById(`status-${p.external_id}`);
             const progressBar = document.getElementById(`prog-${p.external_id}`);
-            
+
             if (statusLabel) {
                 // Remove the paper title and trailing " of " from the label for cleaner UI
                 let cleanText = text.replace(p.title, '').replace(/ of\s*$/, '').trim();
@@ -359,7 +359,7 @@ function updateProgressUI(message) {
                 if (text.includes("Finished chunk")) {
                     if (!p.chunksFinished) p.chunksFinished = 0;
                     p.chunksFinished += 1;
-                    
+
                     const progressMatch = text.match(/(\d+)\/(\d+)/);
                     if (progressMatch) {
                         const total = parseInt(progressMatch[2]);
@@ -389,11 +389,11 @@ function renderPaperReport(external_id, markdownText) {
     if (pb) pb.style.width = '100%';
 
     const reportList = document.getElementById('report-list');
-    
+
     const reportCard = document.createElement('div');
     reportCard.className = 'glass-card markdown-body';
     // Append the Markdown parsed HTML
     reportCard.innerHTML = marked.parse(markdownText);
-    
+
     reportList.appendChild(reportCard);
 }
