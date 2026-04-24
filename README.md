@@ -36,8 +36,8 @@ The primary objective of ScholarFlow is to eliminate the fragmented, manual work
 ### Installation Steps
 1. **Clone & Navigate to the project directory:**
    ```bash
-   git clone [https://github.com/song-0707/UM_hackathon.git](https://github.com/song-0707/UM_hackathon.git)
-   cd UM_hackathon
+   git clone [https://github.com/song-0707/UM_hackathon.git](https://github.com/song-0707/UM_hackathon.git) ScholarFlow
+   cd ScholarFlow
    ```
 2. **Install Python Dependencies:**
    Install all required backend modules via pip:
