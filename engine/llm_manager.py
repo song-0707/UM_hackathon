@@ -100,6 +100,14 @@ class LLMManager:
         
         return self._clean_output(reply_text)
 
+    async def ask(self, prompt: str) -> str:
+        """Stateless one-off query that does not pollute conversation history."""
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": prompt}]}
+        ]
+        reply_text, _ = await self._call_api(messages)
+        return self._clean_output(reply_text)
+
     async def analyze_chunk(self, chunk_text, prompt):
         messages = [
             {"role": "user", "content": [{"type": "text", "text": f"{prompt}\n\nChunk:\n{chunk_text}"}]}

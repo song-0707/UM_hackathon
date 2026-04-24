@@ -18,11 +18,11 @@ class ResearchEngine:
 
     async def get_boolean_query(self, keyword):
         prompt = f"Expand the following keyword into a professional Boolean search string (using AND, OR, NOT) optimized for OpenAlex: {keyword}. Return only the Boolean string."
-        return await self.llm.chat(prompt, clear_history=True)
+        return await self.llm.ask(prompt)
 
     async def create_relevance_profile(self, description):
         prompt = f"Analyze the following complex problem and create a 'Target Relevance Profile' for scoring academic papers. Profile should include key themes, required methodologies, and specific exclusion criteria: {description}"
-        return await self.llm.chat(prompt, clear_history=True)
+        return await self.llm.ask(prompt)
 
     async def discover(self, mode, input_data):
         """Stage 1: Discover papers and get predicted relevance and insight.
@@ -65,7 +65,7 @@ class ResearchEngine:
                 
                 # Get Relevance Score
                 prompt_score = f"Target Profile: {profile}\nAnalyze relevance (0-100) based on Objective Alignment and Methodological Suitability.\nReturn ONLY a numeric score.\nTitle: {title}\nAbstract: {abstract}"
-                score_str = await self.llm.chat(prompt_score)
+                score_str = await self.llm.ask(prompt_score)
                 try:
                     score = int(re.search(r'\d+', score_str).group())
                 except:
@@ -73,7 +73,7 @@ class ResearchEngine:
                 
                 # Get 3-Sentence Insight
                 prompt_insight = f"Based on the following abstract, provide a concise 3-sentence insight highlighting the main contribution and potential relevance to the profile: {profile}\n\nAbstract: {abstract}"
-                insight = await self.llm.chat(prompt_insight)
+                insight = await self.llm.ask(prompt_insight)
                 
                 paper_dict = {
                     "external_id": external_id,
