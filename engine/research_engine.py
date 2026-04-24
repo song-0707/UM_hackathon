@@ -24,25 +24,29 @@ class ResearchEngine:
         prompt = f"Analyze the following complex problem and create a 'Target Relevance Profile' for scoring academic papers. Profile should include key themes, required methodologies, and specific exclusion criteria: {description}"
         return await self.llm.ask(prompt)
 
-    async def discover(self, mode, input_data):
+    async def discover(self, mode, input_data, page=1, existing_query=None, existing_profile=None):
         """Stage 1: Discover papers and get predicted relevance and insight.
         Implements rate limiting via Semaphore(5) and top_k slice."""
-        if mode == 1:
-            query = await self.get_boolean_query(input_data)
-            if query.startswith("Error:"): return {"error": query}
-            profile = f"Search Query: {query}"
+        if page > 1 and existing_query and existing_profile:
+            query = existing_query
+            profile = existing_profile
         else:
-            profile = await self.create_relevance_profile(input_data)
-            if profile.startswith("Error:"): return {"error": profile}
-            query = input_data
+            if mode == 1:
+                query = await self.get_boolean_query(input_data)
+                if query.startswith("Error:"): return {"error": query}
+                profile = f"Search Query: {query}"
+            else:
+                profile = await self.create_relevance_profile(input_data)
+                if profile.startswith("Error:"): return {"error": profile}
+                query = input_data
 
         # Fetch articles
-        results = await self.paper_handler.search_openalex(query)
+        results = await self.paper_handler.search_openalex(query, page)
         if not results:
-            results = await self.paper_handler.search_arxiv(query)
+            results = await self.paper_handler.search_arxiv(query, page)
 
         if not results:
-            return {"error": "No papers found on both OpenAlex and ArXiv."}
+            return {"error": "No more papers found."}
 
         # Rate Limiting: Top 10 papers
         top_results = results[:10]
@@ -94,7 +98,7 @@ class ResearchEngine:
         tasks = [process_insight(paper) for paper in top_results]
         processed_results = await asyncio.gather(*tasks)
         
-        return {"profile": profile, "papers": processed_results}
+        return {"profile": profile, "query": query, "papers": processed_results}
 
     async def deep_analyze_paper(self, paper_id, title, url, year, profile, yield_callback=None):
         """Perform chunking and analysis for a single paper, yielding progress."""
@@ -144,8 +148,11 @@ class ResearchEngine:
             
         return f"Paper: {title}\n" + "\n".join(paper_analysis)
 
-    async def synthesize_all(self, all_analyses, profile, yield_callback=None):
-        if yield_callback: await yield_callback(f"[API CALL] Synthesizing final report...")
-        summarized_results = "\n\n---\n\n".join(all_analyses)
-        final_report = await self.llm.synthesize(summarized_results, f"Provide a comprehensive research synthesis report in Markdown. Profile: {profile}. Max 4000 tokens.")
+    async def synthesize_paper(self, paper_analysis, profile, title, yield_callback=None):
+        if yield_callback: await yield_callback(f"[API CALL] Synthesizing report for {title}...")
+        prompt = (f"Provide a comprehensive research synthesis report in Markdown for the paper '{title}'. "
+                  f"Profile context: {profile}. "
+                  f"Please separate each major section and sub-section clearly using horizontal rules (---) so it is easy to read. "
+                  f"Max 2000 tokens.")
+        final_report = await self.llm.synthesize(paper_analysis, prompt)
         return final_report

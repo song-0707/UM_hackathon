@@ -68,6 +68,7 @@
                 </div>
 
                 <div class="action-bar">
+                    <button id="btn-search-more" class="btn secondary-btn" style="margin-right: 1rem;">Search More Articles <span class="spinner hidden"></span></button>
                     <button id="btn-analyze" class="btn primary-btn" disabled>Deep Analyze Selected <span
                             class="spinner hidden"></span></button>
                 </div>
@@ -83,9 +84,9 @@
 
             <!-- STAGE 4: SYNTHESIS REPORT -->
             <section id="report-section" class="section-hidden">
-                <h2>4. Final Synthesis Report</h2>
-                <div id="report-content" class="glass-card markdown-body">
-                    <!-- Markdown will be rendered here -->
+                <h2>4. Final Synthesis Reports</h2>
+                <div id="report-list" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Individual reports will be appended here -->
                 </div>
             </section>
         </main>

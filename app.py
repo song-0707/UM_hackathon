@@ -33,6 +33,9 @@ tasks_store: Dict[str, Dict[str, Any]] = {}
 class SearchRequest(BaseModel):
     mode: int
     input_data: str
+    page: int = 1
+    existing_query: str = None
+    existing_profile: str = None
 
 class AnalyzeRequest(BaseModel):
     selected_papers: List[Dict[str, Any]]
@@ -40,7 +43,13 @@ class AnalyzeRequest(BaseModel):
 
 @app.post("/api/search")
 async def api_search(req: SearchRequest):
-    results = await engine.discover(req.mode, req.input_data)
+    results = await engine.discover(
+        req.mode, 
+        req.input_data, 
+        page=req.page, 
+        existing_query=req.existing_query, 
+        existing_profile=req.existing_profile
+    )
     if "error" in results:
         return JSONResponse({"error": results["error"]}, status_code=400)
     return JSONResponse(results)
@@ -85,30 +94,34 @@ async def analyze_stream(task_id: str, request: Request):
         async def queue_cb(msg: str):
             await q.put({"type": "progress", "message": msg})
 
+        async def process_single_paper(paper):
+            analysis = await engine.deep_analyze_paper(
+                paper_id=paper.get("external_id", ""),
+                title=paper.get("title", ""),
+                url=paper.get("url", ""),
+                year=paper.get("publication_year", "Unknown"),
+                profile=profile,
+                yield_callback=queue_cb
+            )
+            if analysis:
+                report = await engine.synthesize_paper(analysis, profile, paper.get("title", ""), yield_callback=queue_cb)
+                
+                # Update database for this specific paper
+                await db.update_deep_analysis(paper.get("external_id", ""), report)
+                
+                await q.put({
+                    "type": "paper_complete", 
+                    "external_id": paper.get("external_id", ""), 
+                    "report": report
+                })
+
         async def worker():
             try:
-                for paper in papers:
-                    analysis = await engine.deep_analyze_paper(
-                        paper_id=paper.get("external_id", ""),
-                        title=paper.get("title", ""),
-                        url=paper.get("url", ""),
-                        year=paper.get("publication_year", "Unknown"),
-                        profile=profile,
-                        yield_callback=queue_cb
-                    )
-                    if analysis:
-                        all_analyses.append(analysis)
+                # Run all selected papers in true parallel!
+                tasks = [process_single_paper(paper) for paper in papers]
+                await asyncio.gather(*tasks)
                 
-                if not all_analyses:
-                    await q.put({"type": "error", "message": "No analyses generated."})
-                else:
-                    final_report = await engine.synthesize_all(all_analyses, profile, yield_callback=queue_cb)
-                    
-                    # Update database for each selected paper with the final report
-                    for paper in papers:
-                        await db.update_deep_analysis(paper.get("external_id", ""), final_report)
-                    
-                    await q.put({"type": "complete", "report": final_report})
+                await q.put({"type": "all_complete"})
             except Exception as e:
                 await q.put({"type": "error", "message": str(e)})
             finally:

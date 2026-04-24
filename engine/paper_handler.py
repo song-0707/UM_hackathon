@@ -25,11 +25,12 @@ class PaperHandler:
         if self._session and not self._session.closed:
             await self._session.close()
 
-    async def search_openalex(self, query):
+    async def search_openalex(self, query, page=1):
         params = {
             "search": query,
             "filter": "has_fulltext:true,is_oa:true",
-            "per_page": 5,  # Increased slightly for parallel processing demo
+            "per_page": 10,
+            "page": page,
             "sort": "relevance_score:desc"
         }
         try:
@@ -59,11 +60,11 @@ class PaperHandler:
             print(f"Error searching OpenAlex: {e}")
             return []
 
-    async def search_arxiv(self, query):
+    async def search_arxiv(self, query, page=1):
         params = {
             "search_query": f"all:{query}",
-            "start": 0,
-            "max_results": 5,
+            "start": (page - 1) * 10,
+            "max_results": 10,
             "sortBy": "relevance",
             "sortOrder": "descending"
         }
