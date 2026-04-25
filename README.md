@@ -8,6 +8,7 @@
 
 > **Live Demo:** [https://scholarflow-gpzh.onrender.com/](https://scholarflow-gpzh.onrender.com/)  
 > **Project Board:** [View our Agile Roadmap & Issues](https://github.com/users/song-0707/projects/2/views/1)
+> **Pitching Video:** [https://youtu.be/BWm42K-JCVM](https://youtu.be/BWm42K-JCVM)
 
 ## 📖 Introduction
 **ScholarFlow AI** is a high-performance, cloud-ready research engine designed to automate the academic literature review process. Powered by the cutting-edge **Z AI GLM** model, it seamlessly integrates with major academic databases like OpenAlex and ArXiv to find relevant papers, generate instant insights, bypass paywalls, and deeply analyze entire research papers using a multi-step agentic chunking process.
