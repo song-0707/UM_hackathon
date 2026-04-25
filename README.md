@@ -1,6 +1,6 @@
 # 🎓 ScholarFlow AI
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue.svg?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)
 ![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?logo=render&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)
