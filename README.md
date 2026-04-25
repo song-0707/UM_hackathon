@@ -7,7 +7,8 @@
 ![GLM-5.1](https://img.shields.io/badge/Z_AI-GLM--5.1-blueviolet)
 
 > **Live Demo:** [https://scholarflow-gpzh.onrender.com/](https://scholarflow-gpzh.onrender.com/)  
-> **Project Board:** [View our Agile Roadmap & Issues](https://github.com/users/song-0707/projects/2/views/1) **Pitching Video:** [https://youtu.be/BWm42K-JCVM](https://youtu.be/BWm42K-JCVM)
+> **Project Board:** [View our Agile Roadmap & Issues](https://github.com/users/song-0707/projects/2/views/1)  
+> **Pitching Video:** [https://youtu.be/BWm42K-JCVM](https://youtu.be/BWm42K-JCVM)
 
 ## 📖 Introduction
 **ScholarFlow AI** is a high-performance, cloud-ready research engine designed to automate the academic literature review process. Powered by the cutting-edge **Z AI GLM** model, it seamlessly integrates with major academic databases like OpenAlex and ArXiv to find relevant papers, generate instant insights, bypass paywalls, and deeply analyze entire research papers using a multi-step agentic chunking process.
@@ -29,7 +30,7 @@ The primary objective of ScholarFlow is to eliminate the fragmented, manual work
 ## 🚀 Getting Started (Local Setup)
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.9+
 - A [Supabase](https://supabase.com/) account and project
 - An ILMU API Key (Z AI GLM)
 
